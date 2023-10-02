@@ -1,4 +1,11 @@
+import app
 import pandas as pd
+from sqlalchemy import create_engine
+from conexao import init_app
+
+DATABASE_URL = init_app()
+
+engine = create_engine(DATABASE_URL)
 
 
 def create_mercado(row):
@@ -23,6 +30,9 @@ def filter_data():
 
     df_merged['MERCADO'] = df_merged.apply(lambda row: create_mercado(row), axis=1)
 
+    df_merged.to_sql('Flights', con=engine, if_exists='replace', index=False)
+
     return df_merged
+
 
 filter_data()

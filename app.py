@@ -1,17 +1,11 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os
-
+import dados
+from conexao import init_app
 
 app = Flask(__name__)
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-
-db = SQLAlchemy(app)
-
+db = init_app(app)
 
 @app.route('/')
 def hello_world():  # put application's code here
