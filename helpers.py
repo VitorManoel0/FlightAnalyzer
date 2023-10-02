@@ -1,13 +1,20 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators, SubmitField, PasswordField
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class FormUserLogin(FlaskForm):
-    user = StringField('Nome de usuário', [validators.DataRequired(), validators.Length(min=1, max=50)])
+    username = StringField('Nome de usuário', [validators.DataRequired(), validators.Length(min=1, max=50)])
     password = PasswordField('Senha de usuário', [validators.DataRequired(), validators.Length(min=1, max=50)])
     login = SubmitField('Login')
 
-#
-# class FormUserRegister(FlaskForm):
-#     user = StringField('Nome de usuário', [validators.DataRequired(), validators.Length(min=1, max=50)])
-#     user = StringField('', [validators.DataRequired(), validators.Length(min=1, max=50)])
-#     login = SubmitField('Login')
+class FormUserRegister(FlaskForm):
+    username = StringField('Nome de usuário', [validators.DataRequired(), validators.Length(min=1, max=150)])
+    password = PasswordField('Senha de usuário', [validators.DataRequired(), validators.Length(min=1, max=50)])
+    cadastro = SubmitField('Cadastrar')
+
+def hash_password(password):
+    return generate_password_hash(password, method='pbkdf2:sha256')
+
+def verify_password(hashed_password, password):
+    return check_password_hash(hashed_password, password)

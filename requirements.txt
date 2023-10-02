@@ -5,3 +5,4 @@ flask-sqlalchemy
 sqlalchemy
 python-dotenv
 flask_wtf
+Flask-Migrate

@@ -1,0 +1,32 @@
+{% extends "template.html" %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <a href="{{ url_for('login') }}">
+                        <img src="../static/login.jpg" class="card-img-top" alt="Imagem 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Login</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <a href="{{ url_for('cadastro') }}">
+                        <img src="../static/cadastro.png" class="card-img-top" alt="Imagem 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Cadastro</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md">
+                <h2>teste de voos</h2>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
