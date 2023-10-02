@@ -4,3 +4,4 @@ flask~=3.0.0
 flask-sqlalchemy
 sqlalchemy
 python-dotenv
+flask_wtf
