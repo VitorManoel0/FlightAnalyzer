@@ -12,6 +12,7 @@ def init_app(app=None):
     SECRET_KEY = os.getenv('SECRET_KEY')
 
     if not app:
+        print('passou aqui')
         return DATABASE_URL
 
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL

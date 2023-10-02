@@ -1,7 +1,7 @@
 from flask import Flask, render_template, session, flash, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from conexao import init_app, app, db
-from database import search_user_by_name, add_user
+from database import search_user_by_name, add_user, have_data
 from helpers import FormUserLogin, FormUserRegister, hash_password
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
@@ -14,14 +14,12 @@ csrf = CSRFProtect(app)
 migrate = Migrate(app, db)
 
 
-with app.app_context():
-    print('--------------starting migration--------------')
-    filter_data()
-    print('--------------Finished migration--------------')
-
-
 @app.route('/')
 def index():
+    if not have_data():
+        print('-------------loading data-------------')
+        filter_data()
+        print('-------------finish loading data-------------')
     return render_template('index.html')
 
 @app.route('/login')

@@ -19,7 +19,7 @@ def filter_data():
     df2 = pd.read_csv('dados/Dados_Estatisticos_parte.csv', skiprows=1, sep=';')
 
     filter_columns = ['EMPRESA_SIGLA', 'GRUPO_DE_VOO', 'NATUREZA', 'AEROPORTO_DE_ORIGEM_SIGLA',
-                      'AEROPORTO_DE_DESTINO_SIGLA', 'RPK']
+                      'AEROPORTO_DE_DESTINO_SIGLA', 'RPK', 'ANO', 'MES']
 
     df_filter = df[filter_columns].dropna()
     df_filter2 = df2[filter_columns].dropna()
@@ -31,7 +31,12 @@ def filter_data():
 
     df_merged['MERCADO'] = df_merged.apply(lambda row: create_mercado(row), axis=1)
 
-    df_merged.to_sql('flights', con=engine, if_exists='replace', index=False)
+    filter_columns = ['ANO', 'MES', 'MERCADO', 'RPK']
+
+    df_merged = df_merged[filter_columns]
+    df_merged.columns = df_merged[filter_columns].columns.str.lower()
+
+    df_merged.to_sql('flights', con=engine, if_exists='append', index=False)
 
     return df_merged
 
