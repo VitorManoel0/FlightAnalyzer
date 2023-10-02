@@ -1,0 +1,6 @@
+psycopg2
+pandas~=2.1.1
+flask~=3.0.0
+flask-sqlalchemy
+sqlalchemy
+python-dotenv
