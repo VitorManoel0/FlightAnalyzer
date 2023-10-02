@@ -1,13 +1,11 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import subprocess
-
 
 app = Flask(__name__)
 
-def init_app(app=None):
 
+def init_app(app=None):
     DATABASE_URL = os.getenv('DATABASE_URL')
     SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -22,5 +20,6 @@ def init_app(app=None):
     db = SQLAlchemy(app)
 
     return db
+
 
 db = init_app(app)

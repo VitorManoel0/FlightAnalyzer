@@ -1,4 +1,4 @@
-from conexao import db, app
+from conexao import db
 
 
 class User(db.Model):
@@ -6,8 +6,8 @@ class User(db.Model):
     username = db.Column('username', db.String(150))
     password = db.Column(db.String(150))
 
-    def __init__(self, user, password):
-        self.user = user
+    def __init__(self, username, password):
+        self.username = username
         self.password = password
 
 
@@ -29,14 +29,15 @@ def search_user_by_name(username):
     users = User.query.filter_by(username=username).all()
     return users
 
+
 def have_data():
     contador = Flights.query.count()
     if contador <= 0:
         return False
     return True
 
+
 def add_user(username, password):
     user = User(username, password)
     db.session.add(user)
     db.session.commit()
-

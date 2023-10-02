@@ -2,7 +2,10 @@ psycopg2
 pandas~=2.1.1
 flask~=3.0.0
 flask-sqlalchemy
-sqlalchemy
+sqlalchemy~=2.0.21
 python-dotenv
 flask_wtf
 Flask-Migrate
+WTForms~=3.0.1
+werkzeug~=3.0.0
+alembic~=1.12.0

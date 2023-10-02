@@ -7,9 +7,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from dados import filter_data
 
-
 csrf = CSRFProtect(app)
-
 
 migrate = Migrate(app, db)
 
@@ -22,11 +20,13 @@ def index():
         print('-------------finish loading data-------------')
     return render_template('index.html')
 
+
 @app.route('/login')
 def login():
-#     request.args.get('variavel')
+    #     request.args.get('variavel')
     form = FormUserLogin()
     return render_template('login.html', form=form)
+
 
 @app.route('/cadastro', methods=['POST', 'GET'])
 def cadastro():
@@ -34,21 +34,23 @@ def cadastro():
     form = FormUserRegister()
     return render_template('cadastro.html', form=form, page=page)
 
+
 @app.route('/autenticar', methods=['POST', 'GET'])
 def autenticar():
-    #wip adicionar verificador de senha
+    # wip adicionar verificador de senha
     if 'senha' == 'senha':
         session['logged_user'] = 'nome_usuario'
-        flash('Usuário logado com sucesso ' +  session['logged_user'])
+        flash('Usuário logado com sucesso ' + session['logged_user'])
         return redirect('/')
     else:
         flash('Usuário não logado')
-        #redirecionar para o login
+        # redirecionar para o login
         return redirect('/')
 
-    form = FormUserLogin(request.form)
+    # form = FormUserLogin(request.form)
     print('funcionou')
     return 'Funcionou'
+
 
 @app.route('/autenticar_cadastro', methods=['POST', 'GET'])
 def autenticar_cadastro():
@@ -59,13 +61,14 @@ def autenticar_cadastro():
         if users:
             flash('Usuário ja existente')
             return redirect('/login')
+
         add_user(form.username.data, hash_password(form.password.data))
         session['logged_user'] = 'nome_usuario'
-        flash('Usuário logado com sucesso ' +  session['logged_user'])
+        flash('Usuário logado com sucesso ' + session['logged_user'])
         return redirect('/')
     else:
         flash('Usuário não logado')
-        #redirecionar para o login
+        # redirecionar para o login
         return redirect('/')
 
     form = FormUserLogin(request.form)
@@ -78,6 +81,7 @@ def logout():
     session['logged_user'] = None
     flash('Logout efetuado com sucesso!')
     return redirect('/')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
