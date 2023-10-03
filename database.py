@@ -26,7 +26,7 @@ class Flights(db.Model):
 
 
 def search_user_by_name(username):
-    users = User.query.filter_by(username=username).all()
+    users = User.query.filter_by(username=username).first()
     return users
 
 

@@ -1,8 +1,8 @@
-from flask import render_template, session, flash, redirect, request, jsonify
+from flask import render_template, session, flash, redirect, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, verify_jwt_in_request
 from conexao import app, db, config_jwt
 from database import search_user_by_name, add_user, have_data
-from helpers import FormUserLogin, FormUserRegister, hash_password
+from helpers import FormUserLogin, FormUserRegister, hash_password, verify_password
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from dados import filter_data
@@ -39,18 +39,17 @@ def cadastro():
 
 @app.route('/autenticar', methods=['POST', 'GET'])
 def autenticar():
-    # wip adicionar verificador de senha
-    if 'senha' == 'senha':
-        session['logged_user'] = 'nome_usuario'
-        flash('Usuário logado com sucesso ' + session['logged_user'])
+    form = FormUserLogin(request.form)
+
+    user = search_user_by_name(form.username.data)
+
+    if verify_password(user.password, form.password.data):
+        access_token = create_access_token(identity=form.username.data)
+        flash('Usuário logado com sucesso')
         return redirect('/')
     else:
-        flash('Usuário não logado')
-        # redirecionar para o login
-        return redirect('/')
-
-    # form = FormUserLogin(request.form)
-    return 'Funcionou'
+        flash('nickname ou senha incorreto')
+        return redirect('/login')
 
 
 @app.route('/autenticar_cadastro', methods=['POST', 'GET'])
@@ -64,6 +63,7 @@ def autenticar_cadastro():
             return redirect('/login')
 
         user_add = add_user(form.username.data, hash_password(form.password.data))
+
         if user_add:
             access_token = create_access_token(identity=form.username.data)
             if access_token:
@@ -71,18 +71,11 @@ def autenticar_cadastro():
                 # verify_jwt_in_request()
                 # flash('Usuário ' + get_jwt_identity() + ' logado com sucesso')
                 flash('Usuário logado com sucesso')
+                # Pagina de ver aviões
                 return redirect('/')
         else:
             flash('Ocorreu um erro desconhecido, tente novamente')
             return redirect('/cadastro')
-
-    else:
-        flash('Usuário não logado')
-        # redirecionar para o login
-        return redirect('/')
-
-    form = FormUserLogin(request.form)
-    return 'Funcionou'
 
 
 @app.route('/logout')

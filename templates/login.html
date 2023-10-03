@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 {% block content %}
     <h1>Faça seu login</h1>
-    <form method="post" action="{{ url_for('index') }}">
+    <form method="post" action="{{ url_for('autenticar') }}">
         <input type="hidden" name="proxima" value="">
         {{ form.csrf_token() }}
         <div class="form-group">
