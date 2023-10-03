@@ -38,6 +38,10 @@ def have_data():
 
 
 def add_user(username, password):
-    user = User(username, password)
-    db.session.add(user)
-    db.session.commit()
+    try:
+        user = User(username, password)
+        db.session.add(user)
+        db.session.commit()
+        return True
+    except:
+        return False

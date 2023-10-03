@@ -1,6 +1,6 @@
-from flask import Flask, render_template, session, flash, redirect, request
-from flask_sqlalchemy import SQLAlchemy
-from conexao import init_app, app, db
+from flask import render_template, session, flash, redirect, request, jsonify
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, verify_jwt_in_request
+from conexao import app, db, config_jwt
 from database import search_user_by_name, add_user, have_data
 from helpers import FormUserLogin, FormUserRegister, hash_password
 from flask_wtf.csrf import CSRFProtect
@@ -10,6 +10,8 @@ from dados import filter_data
 csrf = CSRFProtect(app)
 
 migrate = Migrate(app, db)
+
+jwt = config_jwt()
 
 
 @app.route('/')
@@ -48,7 +50,6 @@ def autenticar():
         return redirect('/')
 
     # form = FormUserLogin(request.form)
-    print('funcionou')
     return 'Funcionou'
 
 
@@ -62,17 +63,25 @@ def autenticar_cadastro():
             flash('Usuário ja existente')
             return redirect('/login')
 
-        add_user(form.username.data, hash_password(form.password.data))
-        session['logged_user'] = 'nome_usuario'
-        flash('Usuário logado com sucesso ' + session['logged_user'])
-        return redirect('/')
+        user_add = add_user(form.username.data, hash_password(form.password.data))
+        if user_add:
+            access_token = create_access_token(identity=form.username.data)
+            if access_token:
+                # Verificar JWT issues
+                # verify_jwt_in_request()
+                # flash('Usuário ' + get_jwt_identity() + ' logado com sucesso')
+                flash('Usuário logado com sucesso')
+                return redirect('/')
+        else:
+            flash('Ocorreu um erro desconhecido, tente novamente')
+            return redirect('/cadastro')
+
     else:
         flash('Usuário não logado')
         # redirecionar para o login
         return redirect('/')
 
     form = FormUserLogin(request.form)
-    print('funcionou')
     return 'Funcionou'
 
 
