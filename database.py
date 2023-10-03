@@ -45,3 +45,7 @@ def add_user(username, password):
         return True
     except:
         return False
+
+
+def search_options_mercado():
+    return db.session.query(Flights.id, Flights.mercado).order_by(Flights.mercado).distinct(Flights.mercado).all()

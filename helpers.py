@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, validators, SubmitField, PasswordField
+from wtforms import StringField, validators, SubmitField, PasswordField, SelectField
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -13,6 +13,13 @@ class FormUserRegister(FlaskForm):
     username = StringField('Nome de usuário', [validators.DataRequired(), validators.Length(min=1, max=150)])
     password = PasswordField('Senha de usuário', [validators.DataRequired(), validators.Length(min=1, max=50)])
     cadastro = SubmitField('Cadastrar')
+
+
+class FormFilter(FlaskForm):
+    mercado = SelectField('Selecione o mercado')
+    ano = StringField('Selecione o ano')
+    mes = StringField('Selecione o mês')
+    filtrar = SubmitField('Filtrar')
 
 
 def hash_password(password):

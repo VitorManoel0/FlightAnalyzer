@@ -1,0 +1,23 @@
+{% extends "template.html" %}
+{% block content %}
+    <h1>Selecione o seu filtro</h1>
+    <form method="post" action="{{ url_for('teste') }}">
+        {{ form.csrf_token() }}
+        <div class="form-group">
+            {{ form.mercado.label(class="form-label") }}
+            {{ form.mercado(class="form-select") }}
+        </div>
+        <div class="form-group">
+            {{ form.ano.label(class="form-label") }}
+            {{ form.ano(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.mes.label(class="form-label") }}
+            {{ form.mes(class="form-control") }}
+        </div>
+        <br>
+        <div class="form-group">
+            {{ form.filtrar(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

@@ -1,8 +1,8 @@
 from flask import render_template, session, flash, redirect, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, verify_jwt_in_request
 from conexao import app, db, config_jwt
-from database import search_user_by_name, add_user, have_data
-from helpers import FormUserLogin, FormUserRegister, hash_password, verify_password
+from database import search_user_by_name, add_user, have_data, search_options_mercado
+from helpers import FormUserLogin, FormUserRegister, hash_password, verify_password, FormFilter
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from dados import filter_data
@@ -16,6 +16,7 @@ jwt = config_jwt()
 
 @app.route('/')
 def index():
+    # conferir ID = 2554
     if not have_data():
         print('-------------loading data-------------')
         filter_data()
@@ -44,9 +45,9 @@ def autenticar():
     user = search_user_by_name(form.username.data)
 
     if verify_password(user.password, form.password.data):
-        access_token = create_access_token(identity=form.username.data)
+        create_access_token(identity=form.username.data)
         flash('Usuário logado com sucesso')
-        return redirect('/')
+        return redirect('/filtro')
     else:
         flash('nickname ou senha incorreto')
         return redirect('/login')
@@ -76,6 +77,23 @@ def autenticar_cadastro():
         else:
             flash('Ocorreu um erro desconhecido, tente novamente')
             return redirect('/cadastro')
+
+
+@app.route('/filtro')
+def filtro():
+    # configurar tipo de mes e ano
+    form = FormFilter()
+    teste = search_options_mercado()
+    form.mercado.choices = teste
+    return render_template('filtro.html', form=form)
+
+
+@app.route('/teste')
+def teste():
+    form = FormFilter()
+    teste = search_options_mercado()
+    form.mercado.choices = teste
+    pass
 
 
 @app.route('/logout')
