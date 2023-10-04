@@ -4,12 +4,11 @@ from conexao import app, db, config_jwt
 from database import search_user_by_name, add_user, have_data, search_options_mercado, search_options_mes, \
     search_options_ano
 from helpers import FormUserLogin, FormUserRegister, hash_password, verify_password, FormFilter, fill_form_filter, \
-    gera_grafico
+    gera_grafico, have_grafico
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from dados import filter_data
 import ast
-
 
 csrf = CSRFProtect(app)
 
@@ -85,24 +84,35 @@ def autenticar_cadastro():
 
 @app.route('/filtro')
 def filtro():
-
     form = fill_form_filter()
 
     return render_template('filtro.html', form=form)
 
 
-@app.route('/grafico', methods=['POST','GET'])
+@app.route('/grafico', methods=['POST', 'GET'])
 def grafico():
     # Consulte o banco de dados para obter os dados do gráfico
     form = FormFilter(request.form)
 
-    teste = gera_grafico(mercado=ast.literal_eval(form.mercado.data)[1],
-                         ano_i=ast.literal_eval(form.ano_inicio.data)[0],
-                         ano_f=ast.literal_eval(form.ano_final.data)[0],
-                         mes_i=ast.literal_eval(form.mes_inicio.data)[0],
-                         mes_f=ast.literal_eval(form.mes_final.data)[0])
+    data = gera_grafico(mercado=ast.literal_eval(form.mercado.data)[1],
+                        ano_i=ast.literal_eval(form.ano_inicio.data)[0],
+                        ano_f=ast.literal_eval(form.ano_final.data)[0],
+                        mes_i=ast.literal_eval(form.mes_inicio.data)[0],
+                        mes_f=ast.literal_eval(form.mes_final.data)[0])
 
-    return render_template('grafico.html')
+    form = fill_form_filter()
+
+    if data:
+        path = have_grafico(True)
+        if path:
+            grafico = path
+        else:
+            grafico = 'none'
+
+    else:
+        grafico = 'none'
+
+    return render_template('filtro.html', form=form, grafico=grafico)
 
 
 @app.route('/logout')

@@ -1,3 +1,5 @@
+import os.path
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators, SubmitField, PasswordField, SelectField
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -53,6 +55,23 @@ def fill_form_filter():
     return form
 
 
+def have_grafico(delete=None):
+    for arquivo in os.listdir('static'):
+        caminho_arquivo = os.path.join('static', arquivo)
+
+        if 'grafico' in caminho_arquivo:
+            if delete:
+                return caminho_arquivo
+
+            return True
+
+    return False
+
+
+def delete_img(caminho):
+    os.remove(caminho)
+
+
 def gera_grafico(mercado, ano_i=0, ano_f=0, mes_i=0, mes_f=0):
     dados = Flights.query.filter(Flights.mercado == mercado,
                                  Flights.ano >= ano_i,
@@ -60,7 +79,9 @@ def gera_grafico(mercado, ano_i=0, ano_f=0, mes_i=0, mes_f=0):
                                  Flights.mes >= mes_i,
                                  Flights.mes <= mes_f).all()
 
-    # Crie o gráfico usando Matplotlib
+    if not dados:
+        return False
+
     x = [d.ano for d in dados]
     y = [d.rpk for d in dados]
     plt.plot(x, y)
@@ -69,5 +90,14 @@ def gera_grafico(mercado, ano_i=0, ano_f=0, mes_i=0, mes_f=0):
     plt.title('Gráfico de RPK')
     plt.grid(True)
 
-    # Salve o gráfico em um arquivo ou exiba na página
-    plt.savefig('static/grafico.png')
+    path = have_grafico(True)
+    if have_grafico() and 'grafico_.png' not in path:
+        plt.savefig('static/grafico_.png')
+        if path:
+            delete_img(path)
+    else:
+        plt.savefig('static/grafico.png')
+        if path:
+            delete_img(path)
+
+    return True

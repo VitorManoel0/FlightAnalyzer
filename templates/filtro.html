@@ -36,4 +36,13 @@
             {{ form.filtrar(class="btn btn-primary") }}
         </div>
     </form>
+    {% if grafico and grafico != 'none' %}
+        <div class="text-center">
+            <img src="{{ grafico }}" class="rounded">
+        </div>
+    {% elif grafico == 'none' %}
+        <div class="text-center">
+            <h1>NÃO EXISTE DADOS PARA ESTE MERCADO NESTE INTERVALO</h1>
+        </div>
+    {% endif %}
 {% endblock %}
