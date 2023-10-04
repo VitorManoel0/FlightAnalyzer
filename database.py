@@ -49,3 +49,11 @@ def add_user(username, password):
 
 def search_options_mercado():
     return db.session.query(Flights.id, Flights.mercado).order_by(Flights.mercado).distinct(Flights.mercado).all()
+
+
+def search_options_mes():
+    return db.session.query(Flights.mes).order_by(Flights.mes).distinct(Flights.mes).all()
+
+
+def search_options_ano():
+    return db.session.query(Flights.ano).order_by(Flights.ano).distinct(Flights.ano).all()
