@@ -91,13 +91,15 @@ def gera_grafico(mercado, ano_i=0, ano_f=0, mes_i=0, mes_f=0):
     plt.grid(True)
 
     path = have_grafico(True)
-    if have_grafico() and 'grafico_.png' not in path:
-        plt.savefig('static/grafico_.png')
+
+    if have_grafico() and 'grafico_' not in path:
         if path:
             delete_img(path)
+        plt.savefig('static/grafico_2.png')
     else:
-        plt.savefig('static/grafico.png')
         if path:
             delete_img(path)
+        plt.savefig('static/grafico.png')
+
 
     return True
