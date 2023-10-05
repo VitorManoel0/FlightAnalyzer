@@ -1,6 +1,9 @@
+from io import StringIO
+
 import pandas as pd
 from sqlalchemy import create_engine
 from conexao import init_app
+import requests
 
 
 def create_mercado(row):
@@ -8,14 +11,27 @@ def create_mercado(row):
     return mercado
 
 
-def filter_data():
+def return_data(url):
+    print('Iniciando a stream de dados')
 
+    response = requests.get(url)
+
+    if response.status_code == 200:
+
+        df = pd.read_csv(StringIO(response.text), skiprows=1, sep=';')
+
+        print(df.head())
+    else:
+        print("Falha ao acessar a URL")
+
+
+def filter_data():
     DATABASE_URL = init_app()
 
     engine = create_engine(DATABASE_URL)
 
-    df = pd.read_csv('dados/Dados_Estatisticos.csv', skiprows=1, sep=';')
-    df2 = pd.read_csv('dados/Dados_Estatisticos_parte.csv', skiprows=1, sep=';')
+    df = pd.read_csv(return_data('https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos.csv'))
+    df2 = pd.read_csv(return_data('https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos_parte.csv'))
 
     filter_columns = ['EMPRESA_SIGLA', 'GRUPO_DE_VOO', 'NATUREZA', 'AEROPORTO_DE_ORIGEM_SIGLA',
                       'AEROPORTO_DE_DESTINO_SIGLA', 'RPK', 'ANO', 'MES']
@@ -38,6 +54,3 @@ def filter_data():
     df_merged.to_sql('flights', con=engine, if_exists='append', index=False)
 
     return df_merged
-
-
-
