@@ -1,11 +1,9 @@
 import os.path
-
-from flask import request, flash, redirect, url_for, session
+from flask import  session
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators, SubmitField, PasswordField, SelectField
 from werkzeug.security import generate_password_hash, check_password_hash
 import matplotlib.pyplot as plt
-
 from database import search_options_mercado, search_options_mes, search_options_ano, Flights
 
 
