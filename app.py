@@ -53,7 +53,7 @@ def autenticar():
 
     user = search_user_by_name(form.username.data)
 
-    if verify_password(user.password, form.password.data):
+    if user and verify_password(user.password, form.password.data):
 
         session['session'] = hash_password(form.password.data)
 
@@ -85,7 +85,7 @@ def autenticar_cadastro():
             access_token = hash_password(form.password.data)
             if access_token:
                 flash('Usuário logado com sucesso')
-                return redirect('/')
+                return redirect('/filtro')
         else:
             flash('Ocorreu um erro desconhecido, tente novamente')
             return redirect('/cadastro')
