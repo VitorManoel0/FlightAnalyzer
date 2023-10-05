@@ -2,7 +2,7 @@
 {% block content %}
     <h1>Faça seu cadastro</h1>
     <form method="post" action="{{ url_for('autenticar_cadastro') }}">
-        <input type="hidden" name="proxima" value="">
+        <input type="hidden" value="">
         {{ form.csrf_token() }}
         <div class="form-group">
             {{ form.username.label(class="form-label") }}

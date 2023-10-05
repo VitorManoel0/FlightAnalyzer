@@ -1,5 +1,6 @@
 import os.path
 
+from flask import request, flash, redirect, url_for, session
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators, SubmitField, PasswordField, SelectField
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -101,5 +102,15 @@ def gera_grafico(mercado, ano_i=0, ano_f=0, mes_i=0, mes_f=0):
             delete_img(path)
         plt.savefig('static/grafico.png')
 
-
     return True
+
+
+def logged():
+    try:
+        if session['session']:
+            if session['session'] is not None:
+                return True
+
+    except KeyError:
+
+        return False

@@ -1,10 +1,8 @@
-from flask import render_template, session, flash, redirect, request
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, verify_jwt_in_request
-from conexao import app, db, config_jwt
-from database import search_user_by_name, add_user, have_data, search_options_mercado, search_options_mes, \
-    search_options_ano
+from flask import render_template, session, flash, redirect, request, url_for, jsonify, make_response
+from conexao import app, db
+from database import search_user_by_name, add_user, have_data
 from helpers import FormUserLogin, FormUserRegister, hash_password, verify_password, FormFilter, fill_form_filter, \
-    gera_grafico, have_grafico
+    gera_grafico, have_grafico, logged
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from dados import filter_data
@@ -13,8 +11,6 @@ import ast
 csrf = CSRFProtect(app)
 
 migrate = Migrate(app, db)
-
-jwt = config_jwt()
 
 
 @app.route('/')
@@ -29,35 +25,52 @@ def index():
 
 @app.route('/login')
 def login():
-    #     request.args.get('variavel')
+    if logged():
+        flash('Usuário ja esta logado')
+        return redirect('/filtro')
+
     form = FormUserLogin()
     return render_template('login.html', form=form)
 
 
 @app.route('/cadastro', methods=['POST', 'GET'])
 def cadastro():
-    page = 'cadastro'
+    if logged():
+        flash('Usuário ja esta logado')
+        return redirect('/filtro')
+
     form = FormUserRegister()
-    return render_template('cadastro.html', form=form, page=page)
+    return render_template('cadastro.html', form=form)
 
 
 @app.route('/autenticar', methods=['POST', 'GET'])
 def autenticar():
+    if logged():
+        flash('Usuário ja esta logado')
+        return redirect('/filtro')
+
     form = FormUserLogin(request.form)
 
     user = search_user_by_name(form.username.data)
 
     if verify_password(user.password, form.password.data):
-        create_access_token(identity=form.username.data)
+
+        session['session'] = hash_password(form.password.data)
+
         flash('Usuário logado com sucesso')
-        return redirect('/filtro')
+        return redirect(url_for('filtro'))
+
     else:
+
         flash('nickname ou senha incorreto')
         return redirect('/login')
 
 
 @app.route('/autenticar_cadastro', methods=['POST', 'GET'])
 def autenticar_cadastro():
+    if logged():
+        flash('Usuário ja esta logado')
+        return redirect('/filtro')
     form = FormUserRegister(request.form)
 
     if form.validate_on_submit():
@@ -69,13 +82,9 @@ def autenticar_cadastro():
         user_add = add_user(form.username.data, hash_password(form.password.data))
 
         if user_add:
-            access_token = create_access_token(identity=form.username.data)
+            access_token = hash_password(form.password.data)
             if access_token:
-                # Verificar JWT issues
-                # verify_jwt_in_request()
-                # flash('Usuário ' + get_jwt_identity() + ' logado com sucesso')
                 flash('Usuário logado com sucesso')
-                # Pagina de ver aviões
                 return redirect('/')
         else:
             flash('Ocorreu um erro desconhecido, tente novamente')
@@ -84,6 +93,10 @@ def autenticar_cadastro():
 
 @app.route('/filtro')
 def filtro():
+    if not logged():
+        flash('Usuário precisa estar logado')
+        return redirect(url_for('login'))
+
     form = fill_form_filter()
 
     return render_template('filtro.html', form=form)
@@ -115,9 +128,13 @@ def grafico():
     return render_template('filtro.html', form=form, grafico=grafico)
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    session['logged_user'] = None
+    if not request.cookies.get('session'):
+        return redirect(url_for('/'))
+
+    session['session'] = None
+
     flash('Logout efetuado com sucesso!')
     return redirect('/')
 

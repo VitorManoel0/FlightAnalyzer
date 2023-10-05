@@ -36,6 +36,11 @@
             {{ form.filtrar(class="btn btn-primary") }}
         </div>
     </form>
+    <br>
+    <form action="{{ url_for('logout') }}" method="POST" onsubmit="redirecionar()">
+        {{ form.csrf_token() }}
+        <input class="btn btn-primary" type="submit" value="Logout">
+    </form>
     {% if grafico and grafico != 'none' %}
         <div class="text-center">
             <img src="{{ grafico }}" class="rounded">
