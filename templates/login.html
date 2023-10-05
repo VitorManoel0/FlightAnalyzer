@@ -17,4 +17,9 @@
             {{ form.login(class="btn btn-primary") }}
         </div>
     </form>
+    <br>
+    <form action="{{ url_for('cadastro') }}" method="POST">
+        {{ form.csrf_token() }}
+        <input class="btn btn-primary" type="submit" value="Cadastrar">
+    </form>
 {% endblock %}
