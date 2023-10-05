@@ -20,7 +20,8 @@ def return_data(url):
 
         df = pd.read_csv(StringIO(response.text), skiprows=1, sep=';')
 
-        print(df.head())
+        return df
+
     else:
         print("Falha ao acessar a URL")
 
@@ -30,8 +31,13 @@ def filter_data():
 
     engine = create_engine(DATABASE_URL)
 
-    df = pd.read_csv(return_data('https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos.csv'))
-    df2 = pd.read_csv(return_data('https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos_parte.csv'))
+    df = return_data('https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3'
+                     '%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos'
+                     '.csv')
+
+    df2 = return_data('https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3'
+                      '%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo'
+                      '/Dados_Estatisticos_parte.csv')
 
     filter_columns = ['EMPRESA_SIGLA', 'GRUPO_DE_VOO', 'NATUREZA', 'AEROPORTO_DE_ORIGEM_SIGLA',
                       'AEROPORTO_DE_DESTINO_SIGLA', 'RPK', 'ANO', 'MES']
