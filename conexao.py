@@ -14,6 +14,7 @@ def init_app(app=None):
         return DATABASE_URL
 
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+    app.config['SQLALCHEMY_POOL_RECYCLE'] = 3600
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['DEBUG'] = True
 
